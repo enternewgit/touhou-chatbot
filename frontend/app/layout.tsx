@@ -5,8 +5,8 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: '博麗霊夢チャットボット',
-  description: '博麗霊夢と会話できるチャットボット',
+  title: '東方LINEチャット',
+  description: '東方キャラとLINEできるトボット',
 };
 
 export default function RootLayout({
