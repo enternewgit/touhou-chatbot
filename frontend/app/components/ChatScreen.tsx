@@ -35,7 +35,8 @@ export default function ChatScreen({ characterId, onBack }: ChatScreenProps) {
   useEffect(() => {
     const fetchCharacter = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/characters/${characterId}`);
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
+        const response = await fetch(`${apiUrl}/characters/${characterId}`);
         if (response.ok) {
           const data = await response.json();
           setCharacter(data);
@@ -109,7 +110,8 @@ export default function ChatScreen({ characterId, onBack }: ChatScreenProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/chat', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
+      const response = await fetch(`${apiUrl}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
