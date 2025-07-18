@@ -27,7 +27,7 @@ export default function CharacterSelect({ onCharacterSelect }: CharacterSelectPr
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
         const response = await fetch(`${apiUrl}/characters`);
         if (!response.ok) {
           throw new Error('キャラクター一覧の取得に失敗しました');
@@ -35,7 +35,39 @@ export default function CharacterSelect({ onCharacterSelect }: CharacterSelectPr
         const data = await response.json();
         setCharacters(data.characters);
       } catch (err) {
-        setError(err instanceof Error ? err.message : '不明なエラーが発生しました');
+        console.error('API接続エラー:', err);
+        // フォールバック: モックデータを使用
+        setCharacters([
+          {
+            id: 'reimu',
+            name: '博麗霊夢',
+            full_name: '博麗 霊夢（はくれい れいむ）',
+            description: '博麗神社の巫女（デモモード）',
+            avatar: '/avatars/reimu.png'
+          },
+          {
+            id: 'marisa',
+            name: '霧雨魔理沙',
+            full_name: '霧雨 魔理沙（きりさめ まりさ）',
+            description: '普通の魔法使い（デモモード）',
+            avatar: '/avatars/marisa.png'
+          },
+          {
+            id: 'sakuya',
+            name: '十六夜咲夜',
+            full_name: '十六夜 咲夜（いざよい さくや）',
+            description: '紅魔館のメイド長（デモモード）',
+            avatar: '/avatars/sakuya.png'
+          },
+          {
+            id: 'yuyuko',
+            name: '西行寺幽々子',
+            full_name: '西行寺 幽々子（さいぎょうじ ゆゆこ）',
+            description: '白玉楼の亡霊（デモモード）',
+            avatar: '/avatars/yuyuko.png'
+          }
+        ]);
+        setError('APIに接続できませんが、デモモードで動作中です。');
       } finally {
         setLoading(false);
       }
