@@ -8,15 +8,7 @@ import {
   saveChatHistory, 
   deleteChatHistory 
 } from '../utils/chatHistory';
-
-// キャラクター情報の型定義
-interface Character {
-  id: string;
-  name: string;
-  full_name: string;
-  description: string;
-  avatar: string;
-}
+import { CHARACTERS, type Character } from '../constants/characters';
 
 // プロパティの型定義
 interface ChatScreenProps {
@@ -33,20 +25,11 @@ export default function ChatScreen({ characterId, onBack }: ChatScreenProps) {
 
   // キャラクター情報を取得
   useEffect(() => {
-    const fetchCharacter = async () => {
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
-        const response = await fetch(`${apiUrl}/characters/${characterId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setCharacter(data);
-        }
-      } catch (error) {
-        console.error('キャラクター情報の取得に失敗しました:', error);
-      }
-    };
-
-    fetchCharacter();
+    // 静的データから取得
+    const foundCharacter = CHARACTERS.find(char => char.id === characterId);
+    if (foundCharacter) {
+      setCharacter(foundCharacter);
+    }
   }, [characterId]);
 
   // チャット履歴を読み込み

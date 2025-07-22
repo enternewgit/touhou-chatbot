@@ -61,7 +61,10 @@ export default function CharacterSelect({ onCharacterSelect }: CharacterSelectPr
           return (
             <div
               key={character.id}
-              onClick={() => onCharacterSelect(character.id)}
+              onClick={() => {
+                console.log('Character clicked:', character.id);
+                onCharacterSelect(character.id);
+              }}
               className={`flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${
                 index === 0 ? '' : 'border-t-0'
               }`}
