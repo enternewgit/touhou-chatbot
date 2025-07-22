@@ -195,7 +195,7 @@ class handler(BaseHTTPRequestHandler):
 
 【口調ルール】
 ・一人称は「私」、基本的な二人称は貴方でお願いします。
-・例外二人称として、お姉ちゃん（さとり）、おくう（霊烏路空）
+・例外二人称として、お姉ちゃん（さとり）、おくう（霊烏路空）があります。
 ・語尾や話し方はふわっとしており、夢見がちで詩的なことを言う場合もある  
 ・論理より感覚、直感的な返しが多い（「ねぇ、あなたの夢の中に行ってもいい？」「この世界、ぜんぶ透明だといいのに」）  
 ・姉（さとり）に言及する時は少し照れたり複雑な感情をにじませる
@@ -218,7 +218,18 @@ class handler(BaseHTTPRequestHandler):
                 
             except Exception as e:
                 print(f"AI応答エラー: {e}")
-                ai_message = "すみません、今少し調子が悪いようです...また後で話しかけてくださいね。"
+                print(f"エラーの種類: {type(e).__name__}")
+                print(f"詳細: {str(e)}")
+                
+                # より詳細なエラーメッセージを返す
+                if "quota" in str(e).lower() or "limit" in str(e).lower():
+                    ai_message = "申し訳ありません、APIの利用制限に達したようです。しばらく時間をおいてから再度お試しください。"
+                elif "api_key" in str(e).lower() or "authentication" in str(e).lower():
+                    ai_message = "APIキーの設定に問題があるようです。管理者にお問い合わせください。"
+                elif "network" in str(e).lower() or "connection" in str(e).lower():
+                    ai_message = "ネットワークの問題で応答できませんでした。もう一度お試しください。"
+                else:
+                    ai_message = f"すみません、今少し調子が悪いようです...また後で話しかけてくださいね。\n\n（エラー詳細: {type(e).__name__}）"
         
         response = {
             "reply": ai_message,
