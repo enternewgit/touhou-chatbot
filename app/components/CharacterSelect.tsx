@@ -62,6 +62,7 @@ export default function CharacterSelect({ onCharacterSelect }: CharacterSelectPr
             <div
               key={character.id}
               onClick={() => {
+                alert(`Character clicked: ${character.id}`);
                 console.log('Character clicked:', character.id);
                 onCharacterSelect(character.id);
               }}
