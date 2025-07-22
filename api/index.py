@@ -1,16 +1,9 @@
-import os
-from dotenv import load_dotenv
-import google.generativeai as genai
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import os
+import google.generativeai as genai
 
-# .env ファイルから環境変数を読み込む
-load_dotenv()
-
-# --- Gemini API の設定 ---
 # 環境変数からAPIキーを取得
-# APIキーの値そのものではなく、.env ファイルに書いたキー名（例: GEMINI_API_KEY）を指定します。
-
 API_KEY = os.getenv("GEMINI_API_KEY")
 DEMO_MODE = not API_KEY  # APIキーがない場合はデモモード
 
@@ -18,13 +11,7 @@ print(f"🔧 Debug: API_KEY exists: {bool(API_KEY)}")
 print(f"🔧 Debug: DEMO_MODE: {DEMO_MODE}")
 
 if API_KEY:
-    # Gemini API の設定
-    # genai.configure のスペルミスは修正済み
     genai.configure(api_key=API_KEY)
-    
-    # 使用するGeminiモデル
-    # モデル名はハイフン区切りで、一般的には小文字です。
-    # 高速でコスト効率の良い 'gemini-1.5-flash' を推奨します。
     model = genai.GenerativeModel('gemini-1.5-flash')
     print("✅ Gemini API configured successfully")
 else:
@@ -212,9 +199,6 @@ def chat():
         print(f"API呼び出し中にエラーが発生しました:{e}")
         return jsonify({"error":f"チャット処理中にエラーが発生しました: {str(e)}"}), 500
 
-# アプリケーションの実行
-if __name__ == '__main__':
-    # 開発中はデバッグモードを有効にするとコードの変更が即座に反映される。
-    # 本番環境ではFalseにするか、WSGIサーバー（Gunicornなど）を使用すること
-    # host の指定方法は修正済み
-    app.run(debug=True, host='0.0.0.0')
+# Vercelのサーバーレス関数用のエクスポート
+def handler(request):
+    return app(request)
