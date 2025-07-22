@@ -14,6 +14,21 @@ else:
     model = None
 
 class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        # GETでのテスト用レスポンス
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        
+        response = {
+            "message": "チャットAPIが動作しています。POSTでメッセージを送信してください。",
+            "demo_mode": DEMO_MODE,
+            "api_key_configured": bool(API_KEY)
+        }
+        
+        self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))
+
     def do_POST(self):
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
