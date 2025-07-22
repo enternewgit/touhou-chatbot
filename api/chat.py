@@ -54,8 +54,27 @@ class handler(BaseHTTPRequestHandler):
             ai_message = demo_responses.get(character_id, demo_responses['reimu'])
             ai_message += "\n\n（※これはデモモードです。環境変数GEMINI_API_KEYを設定すると、AIが本格的に応答します）"
         else:
-            # 通常モード（今は簡易版）
-            ai_message = f"こんにちは！{user_message}ですね。"
+            # 本格的なAI応答
+            try:
+                # キャラクター情報
+                character_prompts = {
+                    'reimu': "あなたは博麗霊夢です。楽園の巫女として、のんびりとした口調で話してください。少し面倒くさがりですが、実は責任感が強い性格です。",
+                    'marisa': "あなたは霧雨魔理沙です。普通の魔法使いとして、元気で明るい口調で話してください。好奇心旺盛で努力家です。",
+                    'sakuya': "あなたは十六夜咲夜です。紅魔館のメイド長として、丁寧で上品な口調で話してください。完璧主義者で時間に厳格です。",
+                    'yuyuko': "あなたは西行寺幽々子です。白玉楼の主として、おっとりとした優雅な口調で話してください。天然で食いしん坊な性格です。"
+                }
+                
+                character_prompt = character_prompts.get(character_id, character_prompts['reimu'])
+                
+                # AIに送信するプロンプト
+                full_prompt = f"{character_prompt}\n\nユーザー: {user_message}\n\nキャラクターとして自然に応答してください。"
+                
+                response = model.generate_content(full_prompt)
+                ai_message = response.text
+                
+            except Exception as e:
+                print(f"AI応答エラー: {e}")
+                ai_message = "すみません、今少し調子が悪いようです...また後で話しかけてくださいね。"
         
         response = {
             "reply": ai_message,

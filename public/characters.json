@@ -1,0 +1,26 @@
+{
+  "reimu": {
+    "id": "reimu",
+    "name": "博麗霊夢",
+    "description": "楽園の巫女。いつも気怠そうにしているが、実は強い責任感を持つ。",
+    "avatar": "/characters/reimu.png"
+  },
+  "marisa": {
+    "id": "marisa", 
+    "name": "霧雨魔理沙",
+    "description": "普通の魔法使い。努力家で向上心が強く、常に新しい魔法を研究している。",
+    "avatar": "/characters/marisa.png"
+  },
+  "sakuya": {
+    "id": "sakuya",
+    "name": "十六夜咲夜",
+    "description": "紅魔館のメイド長。時を操る能力を持ち、完璧な仕事ぶりで知られる。",
+    "avatar": "/characters/sakuya.png"
+  },
+  "yuyuko": {
+    "id": "yuyuko",
+    "name": "西行寺幽々子",
+    "description": "白玉楼の主。死を司る能力を持つが、おっとりとした性格で食いしん坊。",
+    "avatar": "/characters/yuyuko.png"
+  }
+}

@@ -27,60 +27,63 @@ export default function CharacterSelect({ onCharacterSelect }: CharacterSelectPr
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
-        
-        // タイムアウト付きfetch（5秒）
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        const response = await fetch(`${apiUrl}/characters`, {
-          signal: controller.signal,
+        // 静的ファイルから直接読み込み（APIコールドスタートを回避）
+        const response = await fetch('/characters.json', {
           headers: {
             'Cache-Control': 'max-age=3600' // 1時間キャッシュ
           }
         });
         
-        clearTimeout(timeoutId);
-        
         if (!response.ok) {
           throw new Error('キャラクター一覧の取得に失敗しました');
         }
-        const data = await response.json();
-        setCharacters(data.characters);
+        
+        const charactersData = await response.json();
+        
+        // オブジェクトを配列に変換
+        const charactersArray = Object.values(charactersData).map((char: any) => ({
+          id: char.id,
+          name: char.name,
+          full_name: char.name,
+          description: char.description,
+          avatar: char.avatar
+        }));
+        
+        setCharacters(charactersArray);
       } catch (err) {
-        console.error('API接続エラー:', err);
-        // フォールバック: モックデータを使用
+        console.error('キャラクターデータ読み込みエラー:', err);
+        // フォールバック: 内蔵データを使用
         setCharacters([
           {
             id: 'reimu',
             name: '博麗霊夢',
             full_name: '博麗 霊夢（はくれい れいむ）',
-            description: '博麗神社の巫女（デモモード）',
-            avatar: '/avatars/reimu.png'
+            description: '楽園の巫女。いつも気怠そうにしているが、実は強い責任感を持つ。',
+            avatar: '/characters/reimu.png'
           },
           {
             id: 'marisa',
             name: '霧雨魔理沙',
             full_name: '霧雨 魔理沙（きりさめ まりさ）',
-            description: '普通の魔法使い（デモモード）',
-            avatar: '/avatars/marisa.png'
+            description: '普通の魔法使い。努力家で向上心が強く、常に新しい魔法を研究している。',
+            avatar: '/characters/marisa.png'
           },
           {
             id: 'sakuya',
             name: '十六夜咲夜',
             full_name: '十六夜 咲夜（いざよい さくや）',
-            description: '紅魔館のメイド長（デモモード）',
-            avatar: '/avatars/sakuya.png'
+            description: '紅魔館のメイド長。時を操る能力を持ち、完璧な仕事ぶりで知られる。',
+            avatar: '/characters/sakuya.png'
           },
           {
             id: 'yuyuko',
             name: '西行寺幽々子',
             full_name: '西行寺 幽々子（さいぎょうじ ゆゆこ）',
-            description: '白玉楼の亡霊（デモモード）',
-            avatar: '/avatars/yuyuko.png'
+            description: '白玉楼の主。死を司る能力を持つが、おっとりとした性格で食いしん坊。',
+            avatar: '/characters/yuyuko.png'
           }
         ]);
-        setError('APIに接続できませんが、デモモードで動作中です。');
+        setError('データを読み込めませんでしたが、デフォルトキャラクターで動作中です。');
       } finally {
         setLoading(false);
       }
