@@ -10,24 +10,23 @@ interface CharacterSelectProps {
 }
 
 export default function CharacterSelect({ onCharacterSelect }: CharacterSelectProps) {
-  const [characters] = useState<Character[]>(CHARACTERS); // 静的データで初期化
-  const [loading] = useState(false); // 読み込み不要なのでfalse固定
-  const [error] = useState<string | null>(null); // エラーも発生しないのでnull固定
+  // 即座に利用可能な静的データ
+  const characters = CHARACTERS;
   const [chatHistories, setChatHistories] = useState<{ [characterId: string]: ChatHistory }>({});
 
-  // チャット履歴を取得（初期化時のみ）
+  // チャット履歴のみを非同期で取得
   useEffect(() => {
-    const loadChatHistories = () => {
+    try {
       const historiesArray = getAllChatHistories();
-      // 配列をオブジェクトに変換
       const historiesObject = historiesArray.reduce((acc, history) => {
         acc[history.characterId] = history;
         return acc;
       }, {} as { [characterId: string]: ChatHistory });
       setChatHistories(historiesObject);
-    };
-
-    loadChatHistories();
+    } catch (error) {
+      console.error('チャット履歴の読み込みエラー:', error);
+      // エラーが発生してもキャラクター選択は表示される
+    }
   }, []);
 
   // チャット履歴をクリア
@@ -38,136 +37,87 @@ export default function CharacterSelect({ onCharacterSelect }: CharacterSelectPr
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex flex-col h-screen bg-gray-50">
-        {/* ヘッダー */}
-        <header className="bg-white p-4 shadow-sm border-b border-gray-200">
-          <h1 className="text-xl font-semibold text-gray-800 text-center">
-            チャット相手を選択
-          </h1>
-        </header>
-        
-        {/* ローディング画面 */}
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
-            <p className="text-gray-600">キャラクター情報を読み込み中...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col h-screen bg-gray-50">
-        {/* ヘッダー */}
-        <header className="bg-white p-4 shadow-sm border-b border-gray-200">
-          <h1 className="text-xl font-semibold text-gray-800 text-center">
-            チャット相手を選択
-          </h1>
-        </header>
-        
-        {/* エラー画面 */}
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-red-600 mb-4">{error}</p>
-            <button 
-              onClick={() => window.location.reload()} 
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-            >
-              再読み込み
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      {/* ヘッダー */}
-      <header className="bg-white p-4 shadow-sm border-b border-gray-200">
+    <div className="flex flex-col h-screen bg-green-50">
+      {/* ヘッダー - LINEライク */}
+      <header className="bg-green-500 text-white p-4 shadow-lg">
         <div className="flex justify-between items-center">
-          <h1 className="text-xl font-semibold text-gray-800">
-            チャット相手を選択
-          </h1>
+          <h1 className="text-xl font-bold">チャット相手を選択</h1>
           {Object.keys(chatHistories).length > 0 && (
             <button
               onClick={handleClearHistory}
-              className="text-sm text-red-600 hover:text-red-800 underline"
+              className="text-sm bg-green-600 hover:bg-green-700 px-3 py-1 rounded-full transition-colors"
             >
-              履歴をクリア
+              履歴削除
             </button>
           )}
         </div>
       </header>
 
-      {/* キャラクター一覧 */}
-      <div className="flex-1 p-4 overflow-y-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-6xl mx-auto">
-          {characters.map((character) => {
-            const hasHistory = chatHistories[character.id];
-            return (
-              <div
-                key={character.id}
-                onClick={() => onCharacterSelect(character.id)}
-                className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 hover:shadow-md hover:border-green-300 cursor-pointer transition-all duration-200 relative"
-              >
-                {/* 履歴アイコン */}
-                {hasHistory && (
-                  <div className="absolute top-2 right-2">
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  </div>
-                )}
-                
-                {/* アバター */}
-                <div className="w-16 h-16 mx-auto mb-3 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
-                  <img 
-                    src={character.avatar} 
-                    alt={character.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const parent = target.parentElement;
-                      if (parent) {
-                        parent.innerHTML = '<span class="text-2xl">👤</span>';
-                      }
-                    }}
-                  />
-                </div>
-                
-                {/* キャラクター情報 */}
-                <div className="text-center">
-                  <h3 className="font-semibold text-gray-800 text-lg mb-1">
+      {/* キャラクター一覧 - LINEの連絡先リストライク */}
+      <div className="flex-1 overflow-y-auto bg-white">
+        {characters.map((character, index) => {
+          const hasHistory = chatHistories[character.id];
+          return (
+            <div
+              key={character.id}
+              onClick={() => onCharacterSelect(character.id)}
+              className={`flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${
+                index === 0 ? '' : 'border-t-0'
+              }`}
+            >
+              {/* アバター - LINEライク */}
+              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-3 overflow-hidden">
+                <img 
+                  src={character.avatar} 
+                  alt={character.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent) {
+                      parent.innerHTML = '<span class="text-xl">👤</span>';
+                    }
+                  }}
+                />
+              </div>
+              
+              {/* キャラクター情報 - LINEライク */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-gray-900 truncate">
                     {character.name}
                   </h3>
-                  <p className="text-xs text-gray-500 mb-2">
-                    {character.full_name}
-                  </p>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    {character.description}
-                  </p>
-                  
-                  {/* 履歴情報 */}
                   {hasHistory && (
-                    <div className="mt-2 text-xs text-green-600">
-                      前回の会話: {new Date(hasHistory.lastUpdated).toLocaleDateString()}
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                      <span className="text-xs text-gray-500">
+                        {new Date(hasHistory.lastUpdated).toLocaleDateString()}
+                      </span>
                     </div>
                   )}
                 </div>
+                <p className="text-sm text-gray-600 truncate mt-1">
+                  {character.description}
+                </p>
               </div>
-            );
-          })}
-        </div>
+              
+              {/* 右矢印アイコン */}
+              <div className="ml-3 text-gray-400">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* フッター */}
-      <footer className="bg-white p-4 border-t border-gray-200">
-        <p className="text-center text-sm text-gray-500">
-          キャラクターを選択してチャットを開始してください
+      <footer className="bg-gray-100 p-3 border-t border-gray-200">
+        <p className="text-center text-xs text-gray-500">
+          Touhou Project チャットボット
         </p>
       </footer>
     </div>
