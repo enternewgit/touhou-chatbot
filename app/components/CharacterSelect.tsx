@@ -35,33 +35,8 @@ export default function CharacterSelect({ onCharacterSelect }: CharacterSelectPr
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
-        // 静的ファイルから直接読み込み（APIコールドスタートを回避）
-        const response = await fetch('/characters.json', {
-          headers: {
-            'Cache-Control': 'max-age=3600' // 1時間キャッシュ
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error('キャラクター一覧の取得に失敗しました');
-        }
-        
-        const charactersData: Record<string, StaticCharacter> = await response.json();
-        
-        // オブジェクトを配列に変換
-        const charactersArray = Object.values(charactersData).map((char: StaticCharacter) => ({
-          id: char.id,
-          name: char.name,
-          full_name: char.name,
-          description: char.description,
-          avatar: char.avatar
-        }));
-        
-        setCharacters(charactersArray);
-      } catch (err) {
-        console.error('キャラクターデータ読み込みエラー:', err);
-        // フォールバック: 内蔵データを使用
-        setCharacters([
+        // まず内蔵データを即座に表示
+        const builtInCharacters = [
           {
             id: 'reimu',
             name: '博麗霊夢',
@@ -90,10 +65,41 @@ export default function CharacterSelect({ onCharacterSelect }: CharacterSelectPr
             description: '白玉楼の主。死を司る能力を持つが、おっとりとした性格で食いしん坊。',
             avatar: '/characters/yuyuko.png'
           }
-        ]);
-        setError('データを読み込めませんでしたが、デフォルトキャラクターで動作中です。');
-      } finally {
+        ];
+        
+        // 即座に表示
+        setCharacters(builtInCharacters);
         setLoading(false);
+        
+        // バックグラウンドで外部データを試行（オプション）
+        try {
+          const response = await fetch('/characters.json', {
+            headers: {
+              'Cache-Control': 'max-age=3600'
+            }
+          });
+          
+          if (response.ok) {
+            const charactersData: Record<string, StaticCharacter> = await response.json();
+            const charactersArray = Object.values(charactersData).map((char: StaticCharacter) => ({
+              id: char.id,
+              name: char.name,
+              full_name: char.name,
+              description: char.description,
+              avatar: char.avatar
+            }));
+            
+            // 外部データで更新（あれば）
+            setCharacters(charactersArray);
+          }
+        } catch (err) {
+          // 外部データの読み込みが失敗しても、既に内蔵データで表示済み
+          console.log('外部データの読み込みに失敗しましたが、内蔵データで動作中です');
+        }
+        
+      } catch (err) {
+        console.error('予期しないエラー:', err);
+        // 上記で既に内蔵データは設定済みなので、特に追加処理は不要
       }
     };
 
