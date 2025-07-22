@@ -27,7 +27,7 @@ interface CharacterSelectProps {
 
 export default function CharacterSelect({ onCharacterSelect }: CharacterSelectProps) {
   const [characters, setCharacters] = useState<Character[]>([]);
-  const [loading, setLoading] = useState(false); // 即座読み込みなのでfalseに変更
+  const [loading, setLoading] = useState(false); // 即座読み込みなのでfalseに変更  
   const [error, setError] = useState<string | null>(null);
   const [chatHistories, setChatHistories] = useState<{ [characterId: string]: ChatHistory }>({});
 
