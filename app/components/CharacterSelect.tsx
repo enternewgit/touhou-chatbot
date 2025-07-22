@@ -117,7 +117,7 @@ export default function CharacterSelect({ onCharacterSelect }: CharacterSelectPr
       {/* フッター */}
       <footer className="bg-gray-100 p-3 border-t border-gray-200">
         <p className="text-center text-xs text-gray-500">
-          Touhou Project チャットボット
+          Touhou Project チャットボット v2.0
         </p>
       </footer>
     </div>
