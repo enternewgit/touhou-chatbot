@@ -1,82 +1,36 @@
-# 東方チャットボット
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-東方ProjectのキャラとチャットできるWebアプリケーションです。
-今はまだ博麗霊夢としかおしゃべりできません。
-## 機能
+## Getting Started
 
-- 博麗霊夢の性格を再現したAIチャットボット
-- リアルタイムチャット機能
-- レスポンシブデザイン
+First, run the development server:
 
-## 技術スタック
-
-### バックエンド
-- Python 3.10+
-- Flask
-- Google Gemini AI API
-- Poetry (依存関係管理)
-
-### フロントエンド
-- Next.js 15
-- React 19
-- TypeScript
-- Tailwind CSS v4
-
-## セットアップ
-
-### 前提条件
-- Node.js 18+
-- Python 3.10+
-- Poetry
-- Google AI Studio APIキー
-
-### インストール
-
-1. リポジトリをクローン
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
-```
-
-2. バックエンドのセットアップ
-```bash
-cd backend
-poetry install
-```
-
-3. 環境変数の設定
-```bash
-# backend/.env ファイルを作成
-GEMINI_API_KEY=your_gemini_api_key_here
-```
-
-4. フロントエンドのセットアップ
-```bash
-cd ../frontend
-npm install
-```
-
-### 実行
-
-1. バックエンドサーバーを起動
-```bash
-cd backend
-poetry run python app.py
-```
-
-2. フロントエンドサーバーを起動（別ターミナル）
-```bash
-cd frontend
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-3. ブラウザで http://localhost:3000 を開く
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## ライセンス
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-MIT License
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## 注意事項
+## Learn More
 
-- `.env`ファイルにAPIキーが含まれているため、Gitにコミットしないよう注意してください
-- APIキーは適切に管理し、公開しないでください
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
