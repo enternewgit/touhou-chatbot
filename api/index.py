@@ -14,6 +14,9 @@ load_dotenv()
 API_KEY = os.getenv("GEMINI_API_KEY")
 DEMO_MODE = not API_KEY  # APIキーがない場合はデモモード
 
+print(f"🔧 Debug: API_KEY exists: {bool(API_KEY)}")
+print(f"🔧 Debug: DEMO_MODE: {DEMO_MODE}")
+
 if API_KEY:
     # Gemini API の設定
     # genai.configure のスペルミスは修正済み
@@ -23,6 +26,7 @@ if API_KEY:
     # モデル名はハイフン区切りで、一般的には小文字です。
     # 高速でコスト効率の良い 'gemini-1.5-flash' を推奨します。
     model = genai.GenerativeModel('gemini-1.5-flash')
+    print("✅ Gemini API configured successfully")
 else:
     print("⚠️ Warning: GEMINI_API_KEY not found. Running in demo mode.")
     model = None
