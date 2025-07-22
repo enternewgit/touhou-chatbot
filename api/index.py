@@ -12,19 +12,20 @@ load_dotenv()
 # APIキーの値そのものではなく、.env ファイルに書いたキー名（例: GEMINI_API_KEY）を指定します。
 
 API_KEY = os.getenv("GEMINI_API_KEY")
+DEMO_MODE = not API_KEY  # APIキーがない場合はデモモード
 
-if not API_KEY:
-    # APIキーが設定されていない場合はエラーを発生させる
-    raise ValueError("GEMINI_API_KEY is not set in .env file or environment variables.")
-
-# Gemini API の設定
-# genai.configure のスペルミスは修正済み
-genai.configure(api_key=API_KEY)
-
-# 使用するGeminiモデル
-# モデル名はハイフン区切りで、一般的には小文字です。
-# 高速でコスト効率の良い 'gemini-1.5-flash' を推奨します。
-model = genai.GenerativeModel('gemini-1.5-flash')
+if API_KEY:
+    # Gemini API の設定
+    # genai.configure のスペルミスは修正済み
+    genai.configure(api_key=API_KEY)
+    
+    # 使用するGeminiモデル
+    # モデル名はハイフン区切りで、一般的には小文字です。
+    # 高速でコスト効率の良い 'gemini-1.5-flash' を推奨します。
+    model = genai.GenerativeModel('gemini-1.5-flash')
+else:
+    print("⚠️ Warning: GEMINI_API_KEY not found. Running in demo mode.")
+    model = None
 
 # --- キャラクター定義 ---
 CHARACTERS = {
@@ -168,18 +169,30 @@ def chat():
     """
 
     try:
-        # Gemini モデルにメッセージを送信し、応答を生成
-        # model.generate_content のスペルミスは修正済み
-        response = model.generate_content(prompt)
-
-        # 応答が正常に返されたか確認
-        if response.candidates and response.candidates[0].content.parts:
-            ai_message = response.candidates[0].content.parts[0].text
+        if DEMO_MODE:
+            # デモモード: 固定の応答を返す
+            demo_responses = {
+                'reimu': ['あら、こんにちはね。今日も神社は平和よ。', 'お賽銭はちゃんと入れていってよね？', 'ふぁ〜...眠いわね。何か面白い話でもある？'],
+                'marisa': ['よう！何か面白いことでもあるのか？', '魔法の研究で忙しいんだぜ〜', 'そうそう、新しい魔法を覚えたんだ！'],
+                'sakuya': ['いらっしゃいませ。何かご用でしょうか？', 'お嬢様はお忙しくされております。', '完璧で瀟洒な従者である私にお任せください。'],
+                'yuyuko': ['あら〜、いらっしゃい♪', 'お腹が空いちゃったわ〜何か美味しいものない？', '春の季節は本当に美しいわね〜']
+            }
+            
+            import random
+            responses = demo_responses.get(character_id, demo_responses['reimu'])
+            ai_message = random.choice(responses) + "\n\n（※これはデモモードです。環境変数GEMINI_API_KEYを設定すると、AIが本格的に応答します）"
         else:
-            # 応答がブロックされた場合や、内容が空の場合
-            # デバッグのために、Geminiからのフィードバックをログに出力する
-            print(f"Geminiからの応答がありませんでした。フィードバック:{response.prompt_feedback}")
-            ai_message = f"うーん、何て言えばいいか分からないわ。({character['name']})"
+            # 通常モード: Gemini APIを使用
+            response = model.generate_content(prompt)
+
+            # 応答が正常に返されたか確認
+            if response.candidates and response.candidates[0].content.parts:
+                ai_message = response.candidates[0].content.parts[0].text
+            else:
+                # 応答がブロックされた場合や、内容が空の場合
+                # デバッグのために、Geminiからのフィードバックをログに出力する
+                print(f"Geminiからの応答がありませんでした。フィードバック:{response.prompt_feedback}")
+                ai_message = f"うーん、何て言えばいいか分からないわ。({character['name']})"
 
         # 生成された応答をJSON形式で返す（キャラクター情報も含める）
         return jsonify({
