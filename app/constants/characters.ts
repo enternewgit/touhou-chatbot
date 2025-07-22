@@ -36,5 +36,26 @@ export const CHARACTERS: Character[] = [
     full_name: '西行寺 幽々子（さいぎょうじ ゆゆこ）',
     description: '白玉楼の主。死を司る能力を持つが、おっとりとした性格で食いしん坊。',
     avatar: '/characters/yuyuko.png'
+  },
+  {
+    id: 'meiling',
+    name: '紅美鈴',
+    full_name: '紅 美鈴（ほん めいりん）',
+    description: '紅魔館の門番。中国武術と気功を得意とし、真面目だが居眠りしがち。',
+    avatar: '/characters/meiling.png'
+  },
+  {
+    id: 'remilia',
+    name: 'レミリア・スカーレット',
+    full_name: 'レミリア・スカーレット',
+    description: '紅魔館の主。吸血鬼でありながら気まぐれで子供っぽい面もある。',
+    avatar: '/characters/remilia.png'
+  },
+  {
+    id: 'koishi',
+    name: '古明地こいし',
+    full_name: '古明地 こいし（こめいじ こいし）',
+    description: '無意識を操る能力を持つ少女。天真爛漫で予測不可能な行動を取る。',
+    avatar: '/characters/koishi.png'
   }
 ];

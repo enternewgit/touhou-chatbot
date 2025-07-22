@@ -60,7 +60,10 @@ export default function ChatScreen({ characterId, onBack }: ChatScreenProps) {
       reimu: 'bg-red-400',
       marisa: 'bg-yellow-400',
       sakuya: 'bg-blue-400',
-      yuyuko: 'bg-pink-400'
+      yuyuko: 'bg-pink-400',
+      meiling: 'bg-green-400',
+      remilia: 'bg-purple-400',
+      koishi: 'bg-teal-400'
     };
     return colorMap[charId] || 'bg-gray-400';
   };
@@ -71,7 +74,10 @@ export default function ChatScreen({ characterId, onBack }: ChatScreenProps) {
       reimu: '🪡',
       marisa: '⭐',
       sakuya: '🔪',
-      yuyuko: '🌸'
+      yuyuko: '🌸',
+      meiling: '🥋',
+      remilia: '🦇',
+      koishi: '💚'
     };
     return emojiMap[charId] || '❓';
   };
