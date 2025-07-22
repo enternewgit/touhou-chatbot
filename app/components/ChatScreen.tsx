@@ -175,8 +175,21 @@ export default function ChatScreen({ characterId, onBack }: ChatScreenProps) {
         </button>
 
         {/* キャラクターアイコン */}
-        <div className={`w-10 h-10 rounded-full ${getCharacterColor(characterId)} flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0`}>
-          {getCharacterEmoji(characterId)}
+        <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0">
+          <img 
+            src={character.avatar} 
+            alt={character.name}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              // 画像読み込み失敗時は絵文字にフォールバック
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const parent = target.parentElement;
+              if (parent) {
+                parent.innerHTML = `<div class="${getCharacterColor(characterId)} w-full h-full rounded-full flex items-center justify-center text-white text-sm font-bold">${getCharacterEmoji(characterId)}</div>`;
+              }
+            }}
+          />
         </div>
 
         {/* キャラクター情報 */}
@@ -206,8 +219,21 @@ export default function ChatScreen({ characterId, onBack }: ChatScreenProps) {
         <div className="max-w-3xl mx-auto space-y-3">
           {messages.length === 0 && (
             <div className="text-center text-gray-500 mt-20">
-              <div className={`w-16 h-16 rounded-full ${getCharacterColor(characterId)} flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4`}>
-                {getCharacterEmoji(characterId)}
+              <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center mx-auto mb-4">
+                <img 
+                  src={character.avatar} 
+                  alt={character.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // 画像読み込み失敗時は絵文字にフォールバック
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent) {
+                      parent.innerHTML = `<div class="${getCharacterColor(characterId)} w-full h-full rounded-full flex items-center justify-center text-white text-2xl font-bold">${getCharacterEmoji(characterId)}</div>`;
+                    }
+                  }}
+                />
               </div>
               <p className="text-lg">{character.name}が待ってるよ！</p>
               <p className="text-sm">何か話しかけてみてね！</p>
@@ -219,8 +245,21 @@ export default function ChatScreen({ characterId, onBack }: ChatScreenProps) {
               className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.sender === 'character' && (
-                <div className={`w-8 h-8 rounded-full ${getCharacterColor(characterId)} flex items-center justify-center text-white text-xs font-bold mr-2 flex-shrink-0`}>
-                  {getCharacterEmoji(characterId)}
+                <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center mr-2 flex-shrink-0">
+                  <img 
+                    src={character.avatar} 
+                    alt={character.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // 画像読み込み失敗時は絵文字にフォールバック
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `<div class="${getCharacterColor(characterId)} w-full h-full rounded-full flex items-center justify-center text-white text-xs font-bold">${getCharacterEmoji(characterId)}</div>`;
+                      }
+                    }}
+                  />
                 </div>
               )}
 
@@ -237,8 +276,21 @@ export default function ChatScreen({ characterId, onBack }: ChatScreenProps) {
           ))}
           {isLoading && (
             <div className="flex justify-start">
-              <div className={`w-8 h-8 rounded-full ${getCharacterColor(characterId)} flex items-center justify-center text-white text-xs font-bold mr-2 flex-shrink-0`}>
-                {getCharacterEmoji(characterId)}
+              <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center mr-2 flex-shrink-0">
+                <img 
+                  src={character.avatar} 
+                  alt={character.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // 画像読み込み失敗時は絵文字にフォールバック
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent) {
+                      parent.innerHTML = `<div class="${getCharacterColor(characterId)} w-full h-full rounded-full flex items-center justify-center text-white text-xs font-bold">${getCharacterEmoji(characterId)}</div>`;
+                    }
+                  }}
+                />
               </div>
               <div className="max-w-[75%] p-3 rounded-2xl shadow-sm bg-white text-gray-800 rounded-bl-md animate-pulse">
                 {character.name}が考え中…
