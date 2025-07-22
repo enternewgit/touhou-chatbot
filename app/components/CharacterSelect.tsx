@@ -27,7 +27,7 @@ export default function CharacterSelect({ onCharacterSelect }: CharacterSelectPr
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
         const response = await fetch(`${apiUrl}/characters`);
         if (!response.ok) {
           throw new Error('キャラクター一覧の取得に失敗しました');
