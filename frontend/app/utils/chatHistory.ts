@@ -102,7 +102,7 @@ export const getLastMessage = (characterId: string): string => {
 };
 
 // 未読メッセージ数を取得（将来の拡張用）
-export const getUnreadCount = (characterId: string): number => {
+export const getUnreadCount = (_characterId: string): number => {
   // 現在は常に0を返すが、将来的に未読機能を追加する際に使用
   return 0;
 };
