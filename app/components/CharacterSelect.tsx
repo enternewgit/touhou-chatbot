@@ -27,83 +27,76 @@ interface CharacterSelectProps {
 
 export default function CharacterSelect({ onCharacterSelect }: CharacterSelectProps) {
   const [characters, setCharacters] = useState<Character[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // 即座読み込みなのでfalseに変更
   const [error, setError] = useState<string | null>(null);
   const [chatHistories, setChatHistories] = useState<{ [characterId: string]: ChatHistory }>({});
 
   // キャラクター一覧を取得
   useEffect(() => {
-    const fetchCharacters = async () => {
+    // 内蔵データを即座に設定
+    const builtInCharacters = [
+      {
+        id: 'reimu',
+        name: '博麗霊夢',
+        full_name: '博麗 霊夢（はくれい れいむ）',
+        description: '楽園の巫女。いつも気怠そうにしているが、実は強い責任感を持つ。',
+        avatar: '/characters/reimu.png'
+      },
+      {
+        id: 'marisa',
+        name: '霧雨魔理沙',
+        full_name: '霧雨 魔理沙（きりさめ まりさ）',
+        description: '普通の魔法使い。努力家で向上心が強く、常に新しい魔法を研究している。',
+        avatar: '/characters/marisa.png'
+      },
+      {
+        id: 'sakuya',
+        name: '十六夜咲夜',
+        full_name: '十六夜 咲夜（いざよい さくや）',
+        description: '紅魔館のメイド長。時を操る能力を持ち、完璧な仕事ぶりで知られる。',
+        avatar: '/characters/sakuya.png'
+      },
+      {
+        id: 'yuyuko',
+        name: '西行寺幽々子',
+        full_name: '西行寺 幽々子（さいぎょうじ ゆゆこ）',
+        description: '白玉楼の主。死を司る能力を持つが、おっとりとした性格で食いしん坊。',
+        avatar: '/characters/yuyuko.png'
+      }
+    ];
+    
+    // 即座に設定（同期的に実行）
+    setCharacters(builtInCharacters);
+    
+    // バックグラウンドで外部データを非同期で試行
+    const fetchExternalData = async () => {
       try {
-        // まず内蔵データを即座に表示
-        const builtInCharacters = [
-          {
-            id: 'reimu',
-            name: '博麗霊夢',
-            full_name: '博麗 霊夢（はくれい れいむ）',
-            description: '楽園の巫女。いつも気怠そうにしているが、実は強い責任感を持つ。',
-            avatar: '/characters/reimu.png'
-          },
-          {
-            id: 'marisa',
-            name: '霧雨魔理沙',
-            full_name: '霧雨 魔理沙（きりさめ まりさ）',
-            description: '普通の魔法使い。努力家で向上心が強く、常に新しい魔法を研究している。',
-            avatar: '/characters/marisa.png'
-          },
-          {
-            id: 'sakuya',
-            name: '十六夜咲夜',
-            full_name: '十六夜 咲夜（いざよい さくや）',
-            description: '紅魔館のメイド長。時を操る能力を持ち、完璧な仕事ぶりで知られる。',
-            avatar: '/characters/sakuya.png'
-          },
-          {
-            id: 'yuyuko',
-            name: '西行寺幽々子',
-            full_name: '西行寺 幽々子（さいぎょうじ ゆゆこ）',
-            description: '白玉楼の主。死を司る能力を持つが、おっとりとした性格で食いしん坊。',
-            avatar: '/characters/yuyuko.png'
+        const response = await fetch('/characters.json', {
+          headers: {
+            'Cache-Control': 'max-age=3600'
           }
-        ];
+        });
         
-        // 即座に表示
-        setCharacters(builtInCharacters);
-        setLoading(false);
-        
-        // バックグラウンドで外部データを試行（オプション）
-        try {
-          const response = await fetch('/characters.json', {
-            headers: {
-              'Cache-Control': 'max-age=3600'
-            }
-          });
+        if (response.ok) {
+          const charactersData: Record<string, StaticCharacter> = await response.json();
+          const charactersArray = Object.values(charactersData).map((char: StaticCharacter) => ({
+            id: char.id,
+            name: char.name,
+            full_name: char.name,
+            description: char.description,
+            avatar: char.avatar
+          }));
           
-          if (response.ok) {
-            const charactersData: Record<string, StaticCharacter> = await response.json();
-            const charactersArray = Object.values(charactersData).map((char: StaticCharacter) => ({
-              id: char.id,
-              name: char.name,
-              full_name: char.name,
-              description: char.description,
-              avatar: char.avatar
-            }));
-            
-            // 外部データで更新（あれば）
-            setCharacters(charactersArray);
-          }
-        } catch (err) {
-          // 外部データの読み込みが失敗しても、既に内蔵データで表示済み
-          console.log('外部データの読み込みに失敗しましたが、内蔵データで動作中です');
+          // 外部データで更新（あれば）
+          setCharacters(charactersArray);
         }
-        
       } catch (err) {
-        console.error('予期しないエラー:', err);
-        // 上記で既に内蔵データは設定済みなので、特に追加処理は不要
+        // 外部データの読み込みが失敗しても、既に内蔵データで表示済み
+        console.log('外部データの読み込みに失敗しましたが、内蔵データで動作中です');
       }
     };
-
-    fetchCharacters();
+    
+    fetchExternalData();
   }, []);
 
   // チャット履歴を取得
