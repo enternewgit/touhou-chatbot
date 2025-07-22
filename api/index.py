@@ -3,6 +3,10 @@ from flask_cors import CORS
 import os
 import google.generativeai as genai
 
+# Flaskアプリの初期化
+app = Flask(__name__)
+CORS(app)
+
 # 環境変数からAPIキーを取得
 API_KEY = os.getenv("GEMINI_API_KEY")
 DEMO_MODE = not API_KEY  # APIキーがない場合はデモモード
@@ -199,6 +203,14 @@ def chat():
         print(f"API呼び出し中にエラーが発生しました:{e}")
         return jsonify({"error":f"チャット処理中にエラーが発生しました: {str(e)}"}), 500
 
-# Vercelのサーバーレス関数用のエクスポート
+# Vercelでアプリを直接エクスポート
+from werkzeug.middleware.proxy_fix import ProxyFix
+app.wsgi_app = ProxyFix(app.wsgi_app)
+
+# Vercelのエントリーポイント
 def handler(request):
-    return app(request)
+    with app.app_context():
+        return app.full_dispatch_request()
+
+# これがVercelの関数ハンドラーとして使用される
+app = app
