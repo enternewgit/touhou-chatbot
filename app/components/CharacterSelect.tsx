@@ -12,6 +12,14 @@ interface Character {
   avatar: string;
 }
 
+// 静的ファイル用のキャラクター型定義
+interface StaticCharacter {
+  id: string;
+  name: string;
+  description: string;
+  avatar: string;
+}
+
 // プロパティの型定義
 interface CharacterSelectProps {
   onCharacterSelect: (characterId: string) => void;
@@ -38,10 +46,10 @@ export default function CharacterSelect({ onCharacterSelect }: CharacterSelectPr
           throw new Error('キャラクター一覧の取得に失敗しました');
         }
         
-        const charactersData = await response.json();
+        const charactersData: Record<string, StaticCharacter> = await response.json();
         
         // オブジェクトを配列に変換
-        const charactersArray = Object.values(charactersData).map((char: any) => ({
+        const charactersArray = Object.values(charactersData).map((char: StaticCharacter) => ({
           id: char.id,
           name: char.name,
           full_name: char.name,
