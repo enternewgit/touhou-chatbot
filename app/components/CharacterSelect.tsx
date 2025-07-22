@@ -28,7 +28,20 @@ export default function CharacterSelect({ onCharacterSelect }: CharacterSelectPr
     const fetchCharacters = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
-        const response = await fetch(`${apiUrl}/characters`);
+        
+        // タイムアウト付きfetch（5秒）
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        const response = await fetch(`${apiUrl}/characters`, {
+          signal: controller.signal,
+          headers: {
+            'Cache-Control': 'max-age=3600' // 1時間キャッシュ
+          }
+        });
+        
+        clearTimeout(timeoutId);
+        
         if (!response.ok) {
           throw new Error('キャラクター一覧の取得に失敗しました');
         }

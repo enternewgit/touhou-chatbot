@@ -1,19 +1,7 @@
 from http.server import BaseHTTPRequestHandler
 import json
-import os
-import google.generativeai as genai
 
-# 環境変数からAPIキーを取得
-API_KEY = os.getenv("GEMINI_API_KEY")
-DEMO_MODE = not API_KEY
-
-if API_KEY:
-    genai.configure(api_key=API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
-else:
-    model = None
-
-# キャラクター定義
+# 静的なキャラクター定義（高速化のため）
 CHARACTERS = {
     "reimu": {"name": "博麗霊夢", "full_name": "博麗 霊夢（はくれい れいむ）", "description": "博麗神社の巫女", "avatar": "/avatars/reimu.png"},
     "marisa": {"name": "霧雨魔理沙", "full_name": "霧雨 魔理沙（きりさめ まりさ）", "description": "普通の魔法使い", "avatar": "/avatars/marisa.png"},
@@ -26,18 +14,14 @@ class handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Cache-Control', 'max-age=3600')  # 1時間キャッシュ
         self.end_headers()
         
-        # キャラクター一覧を返す
-        character_list = []
-        for char_id, char_data in CHARACTERS.items():
-            character_list.append({
-                "id": char_id,
-                "name": char_data["name"],
-                "full_name": char_data["full_name"],
-                "description": char_data["description"],
-                "avatar": char_data["avatar"]
-            })
+        # 高速化：事前に構築されたレスポンス
+        character_list = [
+            {"id": char_id, **char_data}
+            for char_id, char_data in CHARACTERS.items()
+        ]
         
         response = {"characters": character_list}
         self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))
